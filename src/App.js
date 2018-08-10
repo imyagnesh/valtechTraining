@@ -1,29 +1,17 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Header from './Components/Header';
 import Body from './Components/Body';
 import Footer from './Components/Footer';
-import Api from './utils/apiUtil';
+import actions from './Actions';
 
 import './App.css';
 
-const url = 'http://localhost:3000/Todo/';
-
-const styles = {
-  app: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-};
-
 class App extends Component {
   constructor(props) {
-    super(props)
-  
-    this.state = {
-      loading: false,
-       data: [],
-       error: false
-    }
+    super(props);
 
     this.onAdd = this.onAdd.bind(this);
     this.onComplete = this.onComplete.bind(this);
@@ -31,19 +19,16 @@ class App extends Component {
   }
 
   componentWillMount = () => {
-    this.setState({loading:  true})
-    setTimeout(() => {
-      Api.jsonService(url)
-    .then(json => this.setState({data: json, loading: false}))
-    .catch(err => this.setState({error: err, loading: false}))
-    }, 2000)
-    
-    
-  }
-  
+    const {
+      actions: { getTodo },
+    } = this.props;
+    getTodo();
+  };
 
   onAdd(item) {
-    const {data} = this.state;
+    const {
+      todo: { data },
+    } = this.props;
     const postData = {
       id: data.length + 1,
       task: item,
@@ -51,39 +36,44 @@ class App extends Component {
       created_date: new Date(),
       updated_date: new Date(),
     };
-    Api.jsonService(url, 'POST', postData)
-    .then(json => this.setState({data:[...data,json], loading: false }))
-    .catch(err => this.setState({error: err, loading: false}));
+    const {
+      actions: { postTodo },
+    } = this.props;
+    postTodo(postData);
   }
 
   onComplete(item) {
     const postData = {
-      ...item,status: 'C',
+      ...item,
+      status: 'C',
     };
-    const {data} = this.state;
-    const index = data.findIndex(x => x.id === item.id);
-    Api.jsonService(`${url}${item.id}`, 'PUT', postData)
-    .then(res => this.setState({
-      data: [...data.splice(0,index),res,...data.splice(index + 1)]
-    }))
-    .catch(err => console.log(err));
+    const {
+      actions: { putTodo },
+    } = this.props;
+
+    putTodo(item.id, postData);
   }
 
   onDelete(item) {
-    const {data} = this.state;
-    const index = data.findIndex(x => x.id === item.id);
-    Api.jsonService(`${url}${item.id}`, 'Delete')
-    .then(res => this.setState({
-      data: [...data.splice(0,index),...data.splice(index + 1)]
-    }))
-    .catch(err => console.log(err));
-  } 
+    const {
+      actions: { deleteTodo },
+    } = this.props;
+
+    deleteTodo(item.id);
+  }
 
   render() {
-    const {data, loading} = this.state;
+    const {
+      todo: { data, loading },
+    } = this.props;
+    console.log(data, loading);
     return (
       <React.Fragment>
-        {loading && <span>Loading...</span>}
+        {loading && (
+        <span>
+Loading...
+        </span>
+        )}
         <Header onAdd={this.onAdd} />
         <Body data={data} onComplete={this.onComplete} onDelete={this.onDelete} />
         <Footer />
@@ -92,4 +82,20 @@ class App extends Component {
   }
 }
 
-export default App;
+App.propTypes = {
+  todo: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = state => ({
+  todo: state.todo,
+});
+
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators(actions, dispatch),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App);

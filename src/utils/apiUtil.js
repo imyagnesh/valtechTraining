@@ -11,6 +11,11 @@ export function parseJSON(response) {
   return response.json();
 }
 
+export const Action = (type, payload) => ({
+  type,
+  payload,
+});
+
 class Api {
   static jsonService(url, method, data, token) {
     let options = { method };
