@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Header from './Components/Header';
 import Body from './Components/Body';
 import Footer from './Components/Footer';
+import Api from './utils/apiUtil'
 
 import './App.css';
 
@@ -17,24 +18,33 @@ class App extends Component {
     super(props)
   
     this.state = {
-       data: []
+      loading: false,
+       data: [],
+       error: false
     }
 
     this.onAdd = this.onAdd.bind(this);
+    this.onComplete = this.onComplete.bind(this);
+    this.onDelete = this.onDelete.bind(this);
   }
 
   componentWillMount = () => {
-    fetch('http://localhost:3000/Todo')
-    .then(res => res.json())
-    .then(json => console.log(json))
-    .catch(err => console.log(err))
+    this.setState({loading:  true})
+    setTimeout(() => {
+      Api.jsonService()
+    .then(json => this.setState({data: json, loading: false}))
+    .catch(err => this.setState({error: err, loading: false}))
+    }, 2000)
+    
+    
   }
   
 
-  onAdd(data) {
+  onAdd(item) {
+    const {data} = this.state;
     const postData = {
-      id: 2,
-      task: data,
+      id: data.length + 1,
+      task: item,
       status: 'P',
       created_date: new Date(),
       updated_date: new Date(),
@@ -47,15 +57,56 @@ class App extends Component {
         'Content-Type': 'application/json',
       }
     })
-    .then(res => console.log(res))
+    .then(res => res.json())
+    .then(json => this.setState({data:[...data,json], loading: false }))
+    .catch(err => this.setState({error: err, loading: false}));
+  }
+
+  onComplete(item) {
+    const postData = {
+      ...item,status: 'C',
+    };
+    const {data} = this.state;
+    const index = data.findIndex(x => x.id === item.id);
+    fetch(`http://localhost:3000/Todo/${item.id}`,{
+      method: 'PUT',
+      body:  JSON.stringify(postData),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(res => res.json())
+    .then(res => this.setState({
+      data: [...data.splice(0,index),res,...data.splice(index + 1)]
+    }))
     .catch(err => console.log(err));
   }
 
+  onDelete(item) {
+    const {data} = this.state;
+    const index = data.findIndex(x => x.id === item.id);
+    fetch(`http://localhost:3000/Todo/${item.id}`,{
+      method: 'Delete',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(res => res.json())
+    .then(res => this.setState({
+      data: [...data.splice(0,index),...data.splice(index + 1)]
+    }))
+    .catch(err => console.log(err));
+  } 
+
   render() {
+    const {data, loading} = this.state;
     return (
       <div style={styles.app}>
+        {loading && <span>Loading...</span>}
         <Header onAdd={this.onAdd} />
-        <Body />
+        <Body data={data} onComplete={this.onComplete} onDelete={this.onDelete} />
         <Footer />
       </div>
     );
