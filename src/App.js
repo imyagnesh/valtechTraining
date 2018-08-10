@@ -17,14 +17,38 @@ class App extends Component {
     super(props)
   
     this.state = {
-       
+       data: []
     }
 
     this.onAdd = this.onAdd.bind(this);
   }
 
+  componentWillMount = () => {
+    fetch('http://localhost:3000/Todo')
+    .then(res => res.json())
+    .then(json => console.log(json))
+    .catch(err => console.log(err))
+  }
+  
+
   onAdd(data) {
-    alert(data);
+    const postData = {
+      id: 2,
+      task: data,
+      status: 'P',
+      created_date: new Date(),
+      updated_date: new Date(),
+    };
+    fetch('http://localhost:3000/Todo',{
+      method: 'POST',
+      body:  JSON.stringify(postData),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(res => console.log(res))
+    .catch(err => console.log(err));
   }
 
   render() {
