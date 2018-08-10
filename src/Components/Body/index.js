@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import ListItem from './listItem';
 
 class Body extends Component {
   constructor(props) {
@@ -31,15 +32,12 @@ class Body extends Component {
         }}
       >
         {data.map(item => (
-          <div key={item.id}>
-            <span style={item.status === 'C' ? { textDecoration: 'line-through' } : {}}>
-              {item.task}
-            </span>
-            {item.status !== 'C' && (
-              <input type="button" value="Complete" onClick={() => this.complete(item)} />
-            )}
-            <input type="button" value="Delete" onClick={() => this.delete(item)} />
-          </div>
+          <ListItem
+            key={item.id}
+            item={item}
+            completeItem={() => this.complete(item)}
+            deleteItem={() => this.delete(item)}
+          />
         ))}
       </div>
     );

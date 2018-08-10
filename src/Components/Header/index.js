@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import styles from './styles';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
-export default class Header extends Component {
+import { withStyles } from '@material-ui/core/styles';
+
+class Header extends Component {
   static propTypes = {
     onAdd: PropTypes.func.isRequired,
   };
@@ -29,20 +32,36 @@ export default class Header extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     const { todo } = this.state;
     return (
-      <div style={styles.container}>
-        <form onSubmit={this.onSubmit}>
-          <input
-            type="text"
-            name="todo"
-            value={todo}
-            placeholder="Add TODO"
-            onChange={this.onChange}
-          />
-          <input type="submit" value="Add" />
-        </form>
-      </div>
+      <form
+        style={{
+          display: 'flex',
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 100,
+          backgroundColor: '#3D8BE1',
+          padding: '0 20px',
+        }}
+        onSubmit={this.onSubmit}
+      >
+        <TextField
+          label="Add TODO"
+          placeholder="Add TODO"
+          fullWidth
+          name="todo"
+          margin="normal"
+          value={todo}
+          onChange={this.onChange}
+        />
+        <Button type="submit" variant="contained" color="primary">
+          Add
+        </Button>
+      </form>
     );
   }
 }
+
+export default Header;

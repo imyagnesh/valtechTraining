@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import Header from './Components/Header';
 import Body from './Components/Body';
 import Footer from './Components/Footer';
-import Api from './utils/apiUtil'
+import Api from './utils/apiUtil';
 
 import './App.css';
+
+const url = 'http://localhost:3000/Todo/';
 
 const styles = {
   app: {
@@ -31,7 +33,7 @@ class App extends Component {
   componentWillMount = () => {
     this.setState({loading:  true})
     setTimeout(() => {
-      Api.jsonService()
+      Api.jsonService(url)
     .then(json => this.setState({data: json, loading: false}))
     .catch(err => this.setState({error: err, loading: false}))
     }, 2000)
@@ -49,15 +51,7 @@ class App extends Component {
       created_date: new Date(),
       updated_date: new Date(),
     };
-    fetch('http://localhost:3000/Todo',{
-      method: 'POST',
-      body:  JSON.stringify(postData),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      }
-    })
-    .then(res => res.json())
+    Api.jsonService(url, 'POST', postData)
     .then(json => this.setState({data:[...data,json], loading: false }))
     .catch(err => this.setState({error: err, loading: false}));
   }
@@ -68,15 +62,7 @@ class App extends Component {
     };
     const {data} = this.state;
     const index = data.findIndex(x => x.id === item.id);
-    fetch(`http://localhost:3000/Todo/${item.id}`,{
-      method: 'PUT',
-      body:  JSON.stringify(postData),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      }
-    })
-    .then(res => res.json())
+    Api.jsonService(`${url}${item.id}`, 'PUT', postData)
     .then(res => this.setState({
       data: [...data.splice(0,index),res,...data.splice(index + 1)]
     }))
@@ -86,14 +72,7 @@ class App extends Component {
   onDelete(item) {
     const {data} = this.state;
     const index = data.findIndex(x => x.id === item.id);
-    fetch(`http://localhost:3000/Todo/${item.id}`,{
-      method: 'Delete',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      }
-    })
-    .then(res => res.json())
+    Api.jsonService(`${url}${item.id}`, 'Delete')
     .then(res => this.setState({
       data: [...data.splice(0,index),...data.splice(index + 1)]
     }))
@@ -103,12 +82,12 @@ class App extends Component {
   render() {
     const {data, loading} = this.state;
     return (
-      <div style={styles.app}>
+      <React.Fragment>
         {loading && <span>Loading...</span>}
         <Header onAdd={this.onAdd} />
         <Body data={data} onComplete={this.onComplete} onDelete={this.onDelete} />
         <Footer />
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -1,5 +1,3 @@
-const url = 'http://localhost:3000/Todo/';
-
 export function checkHttpStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;
@@ -14,7 +12,7 @@ export function parseJSON(response) {
 }
 
 class Api {
-  static jsonService(method, data, token) {
+  static jsonService(url, method, data, token) {
     let options = { method };
     let headers = {
       Accept: 'application/json',
