@@ -1,11 +1,18 @@
 {
   "Todo": [
     {
-      "id": 1,
-      "task": "get milk",
-      "status": "C",
-      "created_date": "2018-08-10T12:46:59.591Z",
-      "updated_date": "2018-08-10T12:46:59.591Z"
+      "id": 2,
+      "task": "get food",
+      "status": "P",
+      "created_date": "2018-08-11T04:54:52.112Z",
+      "updated_date": "2018-08-11T04:54:52.112Z"
+    },
+    {
+      "id": 3,
+      "task": "give training",
+      "status": "P",
+      "created_date": "2018-08-11T04:55:19.430Z",
+      "updated_date": "2018-08-11T04:55:19.430Z"
     }
   ]
 }

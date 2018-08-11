@@ -11,6 +11,8 @@ import {
   DELETE_TODO,
   DELETE_TODO_SUCCESS,
   DELETE_TODO_FAIL,
+  SHOW_OPEN_TASKS,
+  SHOW_COMPLETED_TASKS,
 } from '../Constants/actionTypes';
 
 const initialState = {
@@ -61,6 +63,14 @@ export default (state = initialState, action) => {
     }
     case DELETE_TODO_FAIL:
       return { ...state, loading: false, error: action.payload };
+
+    case SHOW_OPEN_TASKS: {
+      return { ...state, data: state.data.filter(x => x.status === 'P') };
+    }
+
+    case SHOW_COMPLETED_TASKS: {
+      return { ...state, data: state.data.filter(x => x.status === 'C') };
+    }
     default:
       return state;
   }

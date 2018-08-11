@@ -16,12 +16,15 @@ class App extends Component {
     this.onAdd = this.onAdd.bind(this);
     this.onComplete = this.onComplete.bind(this);
     this.onDelete = this.onDelete.bind(this);
+    this.showOpenTasks = this.showOpenTasks.bind(this);
+    this.showCompletedTasks = this.showCompletedTasks.bind(this);
   }
 
   componentWillMount = () => {
     const {
       actions: { getTodo },
     } = this.props;
+
     getTodo();
   };
 
@@ -62,6 +65,22 @@ class App extends Component {
     deleteTodo(item.id);
   }
 
+  showOpenTasks() {
+    const {
+      actions: { showOpenTasks },
+    } = this.props;
+
+    showOpenTasks();
+  }
+
+  showCompletedTasks() {
+    const {
+      actions: { showCompletedTasks },
+    } = this.props;
+
+    showCompletedTasks();
+  }
+
   render() {
     const {
       todo: { data, loading },
@@ -76,6 +95,8 @@ Loading...
         )}
         <Header onAdd={this.onAdd} />
         <Body data={data} onComplete={this.onComplete} onDelete={this.onDelete} />
+        <input type="button" value="Open Tasks" onClick={this.showOpenTasks} />
+        <input type="button" value="Completed Tasks" onClick={this.showCompletedTasks} />
         <Footer />
       </React.Fragment>
     );

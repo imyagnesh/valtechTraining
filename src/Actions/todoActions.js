@@ -12,6 +12,8 @@ import {
   DELETE_TODO,
   DELETE_TODO_SUCCESS,
   DELETE_TODO_FAIL,
+  SHOW_OPEN_TASKS,
+  SHOW_COMPLETED_TASKS,
 } from '../Constants/actionTypes';
 
 const url = 'http://localhost:3000/Todo/';
@@ -49,5 +51,17 @@ export function deleteTodo(id) {
     Api.jsonService(`${url}${id}`, 'DELETE')
       .then(() => dispatch(Action(DELETE_TODO_SUCCESS, id)))
       .catch(err => dispatch(Action(DELETE_TODO_FAIL, err)));
+  };
+}
+
+export function showOpenTasks() {
+  return (dispatch) => {
+    dispatch(Action(SHOW_OPEN_TASKS));
+  };
+}
+
+export function showCompletedTasks() {
+  return (dispatch) => {
+    dispatch(Action(SHOW_COMPLETED_TASKS));
   };
 }
